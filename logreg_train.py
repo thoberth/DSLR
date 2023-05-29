@@ -1,5 +1,6 @@
 from tqdm import tqdm
 from utils import *
+import pickle
 
 def normalize(x) -> np.ndarray:
 	mean = np.sum(x) / len(x)
@@ -39,7 +40,6 @@ def sort_y(y_to_sort, target):
 
 def sort_yhat(preds):
 	y_hat = np.zeros(preds[0].shape)
-	print(y_hat.shape)
 	for i, pred_0, pred_1, pred_2, pred_3 in zip(range(len(y_hat)), preds[0], preds[1], preds[2], preds[3]):
 		best = max(pred_0, pred_1, pred_2, pred_3)
 		if best == pred_0:
@@ -51,6 +51,10 @@ def sort_yhat(preds):
 		if best == pred_3:
 			y_hat[i] = 3
 	return y_hat
+
+def save_thetas(to_save):
+	with open('theta.pkl', 'wb') as f:
+		pickle.dump(to_save, f)
 
 if __name__=="__main__":
 	if len(sys.argv) != 2:
@@ -76,14 +80,17 @@ if __name__=="__main__":
 	for i in range(X.shape[1]):
 		X[:, i] = normalize(X[:, i])
 	legend = { 0:'Gryffindor', 1:'Hufflepuff', 2:'Ravenclaw', 3:'Slytherin' }
-	theta = []
-	preds = []
+	theta, preds = [], []
 	for i in range(4):
-		theta.append(fit(X[:1000], sort_y(y, legend[i])[:1000]))
-		preds.append(predict(X[1000:], theta[i]))
-	y_hat = sort_yhat(preds)
-	pred_stat = 0
-	for yy, yy_hat in zip(sort_y(y, legend[i])[1000:], y_hat):
-		if yy == yy_hat:
-			pred_stat += 1
-	print(f'score : {pred_stat}/307')
+		theta.append(fit(X, sort_y(y, legend[i])))
+		# preds.append(predict(X, theta[i]))
+	save_thetas(theta)
+
+	# y_hat = sort_yhat(preds)
+	# pred_stat = 0
+	# for i in range(len(legend)):
+	# 	for yy, yy_hat in zip(sort_y(y, legend[i])[1000:], y_hat):
+	# 		print(yy, yy_hat)
+	# 		if yy == 1 and yy_hat == i:
+	# 			pred_stat += 1
+	# print(f'score : {pred_stat}/307')

@@ -18,11 +18,27 @@ def compute_stat(df):
 					'25%': percentile(25, np_colonne),
 					'50%': percentile(50, np_colonne),
 					'75%': percentile(75, np_colonne),
-					'Max': np.max(np_colonne) }
+					'Max': np.max(np_colonne),
+					'Skewness': skewness(np_colonne),
+					'Variance': variance(np_colonne),
+				}
 	return features_dict
 
+def variance(array):
+	mu = mean(array)
+	N = array.shape[0]
+	variance = np.sum(((array - mu) ** 2) / N)
+	return variance
+
+def skewness(array):
+	mu = mean(array)
+	sigma = std(array)
+	N = array.shape[0]
+	skewness = np.sum((((array - mu)/sigma) ** 3) / N)
+	return skewness
+
 def describe_stat(features_dict):
-	print(f'{"":15} |{"Count":>12} |{"Mean":>12} |{"Std":>12} |{"Min":>12} |{"25%":>12} |{"50%":>12} |{"75%":>12} |{"Max":>12} |')
+	print(f'{"":15} |{"Count":>12} |{"Mean":>12} |{"Std":>12} |{"Min":>12} |{"25%":>12} |{"50%":>12} |{"75%":>12} |{"Max":>12} |{"Skewness":>12} |{"Variance":>12} |')
 	for key, value in features_dict.items():
 		print(f'{key:15.15}', end=' |')
 		for k, v in value.items():

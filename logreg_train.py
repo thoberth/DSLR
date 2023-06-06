@@ -83,14 +83,4 @@ if __name__=="__main__":
 	theta, preds = [], []
 	for i in range(4):
 		theta.append(fit(X, sort_y(y, legend[i])))
-		# preds.append(predict(X, theta[i]))
 	save_thetas(theta)
-
-	# y_hat = sort_yhat(preds)
-	# pred_stat = 0
-	# for i in range(len(legend)):
-	# 	for yy, yy_hat in zip(sort_y(y, legend[i])[1000:], y_hat):
-	# 		print(yy, yy_hat)
-	# 		if yy == 1 and yy_hat == i:
-	# 			pred_stat += 1
-	# print(f'score : {pred_stat}/307')

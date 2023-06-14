@@ -18,11 +18,25 @@ def compute_gradient(X, y, theta):
 	log_gradient = (1/len(y)) * X_extented.T.dot(predict(X, theta) - y)
 	return log_gradient
 
-def fit(X, y, alpha=1e-3, iter=15000):
-	theta = np.random.rand(X.shape[1] + 1, 1).reshape(-1, 1)
+def fit(X, y, alpha=1e-3, iter=15000, algo="GD", nbr_batch=50):
 	print('Entrainement du modele:')
+	theta = np.random.rand(X.shape[1] + 1, 1).reshape(-1, 1)
+	# diviser X et y if algo == MBGD en nbr_batch
+	if algo == "MBGD":
+		batch_X = np.array_split(X, nbr_batch)
+		batch_y = np.array_split(y, nbr_batch)
+		i = 0
 	for _ in tqdm(range(iter)):
-		log_gradient = compute_gradient(X, y, theta)
+		if algo == "GD":
+			log_gradient = compute_gradient(X, y, theta)
+		elif algo == "SGD":
+			to_train = random.randint(0, X.shape[0] - 1)
+			log_gradient = compute_gradient(X[to_train, :].reshape(1, -1), y[to_train, :], theta)
+		elif algo == "MBGD":
+			if i == nbr_batch:
+				i = 0
+			log_gradient = compute_gradient(batch_X[i], batch_y[i], theta)
+			i += 1
 		theta = theta - (alpha * log_gradient)
 	return theta
 
@@ -82,5 +96,5 @@ if __name__=="__main__":
 	legend = { 0:'Gryffindor', 1:'Hufflepuff', 2:'Ravenclaw', 3:'Slytherin' }
 	theta, preds = [], []
 	for i in range(4):
-		theta.append(fit(X, sort_y(y, legend[i])))
+		theta.append(fit(X, sort_y(y, legend[i]), algo='GD'))
 	save_thetas(theta)

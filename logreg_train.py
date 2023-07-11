@@ -71,9 +71,12 @@ def save_thetas(to_save):
 		pickle.dump(to_save, f)
 
 if __name__=="__main__":
+	algo = "GD"
 	if len(sys.argv) != 2:
-		print('Error program must take one parameter.')
-		exit(1)
+		if len(sys.argv) != 3 or (sys.argv[2] != 'SGD' and sys.argv[2] != 'MBGD'):
+			print('Error: Usage:\npython logreg_train.py path/to/dataset.csv *BONUS*')
+			exit(1)
+		algo = sys.argv[2]
 	try:
 		df = pd.read_csv(sys.argv[1])
 	except:
@@ -96,5 +99,5 @@ if __name__=="__main__":
 	legend = { 0:'Gryffindor', 1:'Hufflepuff', 2:'Ravenclaw', 3:'Slytherin' }
 	theta, preds = [], []
 	for i in range(4):
-		theta.append(fit(X, sort_y(y, legend[i]), algo='GD'))
+		theta.append(fit(X, sort_y(y, legend[i]), algo=algo))
 	save_thetas(theta)
